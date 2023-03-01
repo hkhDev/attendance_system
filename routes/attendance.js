@@ -1,15 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const mysql = require("mysql");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const db = mysql.createConnection({
-  host: "en1ehf30yom7txe7.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
-  user: "j3arytr0j7mljqe2",
-  password: "j9p3r86yd49a53wh",
-  database: "p3vxnuwcemhdhu3s",
+  host: process.env.host,
+  user: process.env.user,
+  password: process.env.password,
+  database: process.env.database,
 });
 // CLEARDB_DATABASE_URL: mysql://b0df48975a9c51:fdd76b05@us-cdbr-east-06.cleardb.net/heroku_3c4710e5697185a?reconnect=true
 //JAWSDB_WHITE_URL:     mysql://j3arytr0j7mljqe2:j9p3r86yd49a53wh@en1ehf30yom7txe7.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/p3vxnuwcemhdhu3s
+
+console.log(process.env.host);
+
 router.get("/allattendance", (req, res) => {
   const sql = "SELECT * FROM attendance";
   db.query(sql, (err, data) => {

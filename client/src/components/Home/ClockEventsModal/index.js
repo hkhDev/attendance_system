@@ -7,17 +7,27 @@ import Spinner from "react-bootstrap/Spinner";
 
 export function ClockEventsModal(props) {
   const [employeeID, setemployeeID] = useState("");
+  const [validated, setValidated] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    if (form.checkValidity() === true) {
+      props.updateShift(employeeID);
+    }
+    setValidated(true);
+  };
 
   const handleClose = () => {
     setemployeeID("");
     props.setModalClose(false);
+    setValidated(false);
   };
   // const handleShow = () => setShow(true);
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    props.updateShift(employeeID);
-    // setemployeeID("");
-  };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   props.updateShift(employeeID);
+  // };
 
   return (
     <Modal show={props.show} onHide={handleClose}>
@@ -29,7 +39,7 @@ export function ClockEventsModal(props) {
           <Modal.Body>{props.clockInOutMsg}</Modal.Body>
         </>
       ) : (
-        <Form onSubmit={handleSubmit}>
+        <Form noValidate validated={validated} onSubmit={handleSubmit}>
           <Modal.Header closeButton>
             <Modal.Title>{props.title} Shift</Modal.Title>
           </Modal.Header>
@@ -42,6 +52,7 @@ export function ClockEventsModal(props) {
               >
                 <Form.Control
                   type="number"
+                  required
                   placeholder="6111111"
                   value={employeeID}
                   onChange={(e) => {
@@ -49,6 +60,9 @@ export function ClockEventsModal(props) {
                   }}
                   disabled={props.isLoading}
                 />
+                <Form.Control.Feedback type="invalid">
+                  Please enter an employee ID.
+                </Form.Control.Feedback>
               </FloatingLabel>
             </Form.Group>
           </Modal.Body>

@@ -36,13 +36,14 @@ export function Home(props) {
           `${res.data.name[0].name} has successfully clocked in`
         );
         setIsLoading(false);
+        setClockInOutStatus(true);
       })
       .catch((error) => {
         console.log("error");
         setClockInOutMsg(error.response.data.error);
         console.log(error.response);
+        setClockInOutStatus(true);
       });
-    setClockInOutStatus(true);
   };
 
   const endShift = (id) => {
@@ -58,13 +59,14 @@ export function Home(props) {
           `${res.data.name[0].name} has successfully clocked out`
         );
         setIsLoading(false);
+        setClockInOutStatus(true);
       })
       .catch((error) => {
         console.log("error");
         setClockInOutMsg(error.response.data.error);
         console.log(error.response);
+        setClockInOutStatus(true);
       });
-    setClockInOutStatus(true);
   };
 
   return (

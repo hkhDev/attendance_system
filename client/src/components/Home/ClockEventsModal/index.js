@@ -16,7 +16,7 @@ export function ClockEventsModal(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
     props.updateShift(employeeID);
-    setemployeeID("");
+    // setemployeeID("");
   };
 
   return (
@@ -31,7 +31,7 @@ export function ClockEventsModal(props) {
       ) : (
         <Form onSubmit={handleSubmit}>
           <Modal.Header closeButton>
-            <Modal.Title>{props.title}</Modal.Title>
+            <Modal.Title>{props.title} Shift</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form.Group className="mb-3" controlId="formBasicID">
@@ -47,6 +47,7 @@ export function ClockEventsModal(props) {
                   onChange={(e) => {
                     setemployeeID(e.target.value);
                   }}
+                  disabled={props.isLoading}
                 />
               </FloatingLabel>
             </Form.Group>

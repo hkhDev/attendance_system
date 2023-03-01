@@ -34,7 +34,6 @@ export function Attendance(props) {
 
   const getEmployeeAttendance = (id) => {
     setIsLoading(true);
-
     // console.log(employeeId);
     axios
       .get(`/employeeattendance/${id}`)

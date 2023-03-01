@@ -3,19 +3,22 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Spinner from "react-bootstrap/Spinner";
 
 export function ClockEventsModal(props) {
   const [employeeID, setemployeeID] = useState("");
 
-  const handleClose = () => props.setModalClose(false);
+  const handleClose = () => {
+    setemployeeID("");
+    props.setModalClose(false);
+  };
   // const handleShow = () => setShow(true);
   const handleSubmit = (e) => {
     e.preventDefault();
     props.updateShift(employeeID);
     setemployeeID("");
-
-    // handleClose();
   };
+
   return (
     <Modal show={props.show} onHide={handleClose}>
       {props.clockInOutStatus ? (
@@ -38,7 +41,7 @@ export function ClockEventsModal(props) {
                 className="mb-3"
               >
                 <Form.Control
-                  type="string"
+                  type="number"
                   placeholder="6111111"
                   value={employeeID}
                   onChange={(e) => {
@@ -49,12 +52,22 @@ export function ClockEventsModal(props) {
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant="primary" type="submit">
-              {props.title}
-            </Button>
+            {props.isLoading ? (
+              <Button variant="primary" type="submit" disabled>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />{" "}
+                Loading...
+              </Button>
+            ) : (
+              <Button variant="primary" type="submit">
+                {props.title}
+              </Button>
+            )}
           </Modal.Footer>
         </Form>
       )}

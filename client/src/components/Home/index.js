@@ -14,6 +14,7 @@ export function Home(props) {
   const [endModalShow, setEndModalShow] = useState(false);
   const [clockInOutStatus, setClockInOutStatus] = useState(false);
   const [clockInOutMsg, setClockInOutMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     var timer = setInterval(() => setDate(new Date()), 1000);
@@ -24,7 +25,7 @@ export function Home(props) {
 
   const startShift = (id) => {
     setClockInOutMsg("");
-    // setClockInOutStatus(false);
+    setIsLoading(true);
     axios
       .post("/newclockinrecord", { employee_id: id })
       .then((res) => {
@@ -34,8 +35,7 @@ export function Home(props) {
         setClockInOutMsg(
           `${res.data.name[0].name} has successfully clocked in`
         );
-        // setEmployeeName(res.data.name[0].name);
-        // setClockInOutStatus(true);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.log("error");
@@ -47,7 +47,7 @@ export function Home(props) {
 
   const endShift = (id) => {
     setClockInOutMsg("");
-    // setClockInOutStatus(false);
+    setIsLoading(true);
     axios
       .put("/newclockoutrecord", { employee_id: id })
       .then((res) => {
@@ -57,8 +57,7 @@ export function Home(props) {
         setClockInOutMsg(
           `${res.data.name[0].name} has successfully clocked out`
         );
-        // setEmployeeName(res.data.name[0].name);
-        // setClockInOutStatus(true);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.log("error");
@@ -72,7 +71,7 @@ export function Home(props) {
     <Container fluid="md" className="home">
       <h1 className="time">{date.toLocaleTimeString("en")}</h1>
       <Row className="justify-content-center">
-        <Col md="4" xs="8" className="home-button">
+        <Col md="3" xs="8" className="home-button">
           <Image
             roundedCircle
             fluid
@@ -82,11 +81,12 @@ export function Home(props) {
               setStartModalShow(true);
               setClockInOutStatus(false);
               setClockInOutMsg("");
+              setIsLoading(false);
             }}
           />
           <h2>Start Shift</h2>
         </Col>
-        <Col md="4" xs="8" className="home-button">
+        <Col md="3" xs="8" className="home-button">
           <Image
             roundedCircle
             fluid
@@ -96,13 +96,14 @@ export function Home(props) {
               setEndModalShow(true);
               setClockInOutStatus(false);
               setClockInOutMsg("");
+              setIsLoading(false);
             }}
           />
           <h2>End Shift</h2>
         </Col>
       </Row>
       <Row className="justify-content-center">
-        <Col md="4" xs="8" className="home-button">
+        <Col md="3" xs="8" className="home-button">
           <LinkContainer to="/Attendance">
             <Image
               roundedCircle
@@ -121,8 +122,8 @@ export function Home(props) {
         updateShift={startShift}
         setModalClose={setStartModalShow}
         clockInOutStatus={clockInOutStatus}
-        // employeeName={employeeName}
         clockInOutMsg={clockInOutMsg}
+        isLoading={isLoading}
       />
       <ClockEventsModal
         show={endModalShow}
@@ -130,8 +131,8 @@ export function Home(props) {
         updateShift={endShift}
         setModalClose={setEndModalShow}
         clockInOutStatus={clockInOutStatus}
-        // employeeName={employeeName}
         clockInOutMsg={clockInOutMsg}
+        isLoading={isLoading}
       />
     </Container>
   );

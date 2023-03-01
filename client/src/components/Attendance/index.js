@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
@@ -7,12 +8,16 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Table from "react-bootstrap/Table";
+import Spinner from "react-bootstrap/Spinner";
 import "./index.scss";
 
 export function Attendance(props) {
+  const navigate = useNavigate();
   const [employeeId, setEmployeeId] = useState("");
   const [attendanceRecords, setAttendanceRecords] = useState([]);
   const [validated, setValidated] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSearched, setIsSearched] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -23,13 +28,20 @@ export function Attendance(props) {
     setValidated(true);
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   const getEmployeeAttendance = (id) => {
+    setIsLoading(true);
+    setIsSearched(true);
     // console.log(employeeId);
     axios
       .get(`/employeeattendance/${id}`)
       .then((res) => {
         console.log(res.data);
         setAttendanceRecords(res.data);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.log(error.response);
@@ -66,84 +78,99 @@ export function Attendance(props) {
             <Form.Control.Feedback type="invalid">
               Please enter an employee ID.
             </Form.Control.Feedback>
-            <Button variant="primary" type="submit">
-              Search
+            {isLoading ? (
+              <Button
+                variant="primary"
+                type="submit"
+                disabled
+                className="search-button"
+              >
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />{" "}
+                Searching...
+              </Button>
+            ) : (
+              <Button variant="primary" type="submit" className="search-button">
+                Search
+              </Button>
+            )}
+
+            <Button
+              variant="secondary"
+              className="back-button"
+              onClick={handleBack}
+            >
+              Back
             </Button>
           </Col>
         </Row>
-        {/* {isLoading ? (
-          <Button variant="primary" type="submit" disabled>
-            <Spinner
-              as="span"
-              animation="grow"
-              size="sm"
-              role="status"
-              aria-hidden="true"
-            />{" "}
-            Searching...
-          </Button>
-        ) : ( */}
-
-        {/* )}} */}
       </Form>
-      {attendanceRecords.length > 0 && (
-        <>
-          <h2>
-            {attendanceRecords[0].name} (Employee ID:{" "}
-            {attendanceRecords[0].employee_id})
-          </h2>
-          <Table striped>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Date</th>
-                <th>Clock In Time</th>
-                <th>Clock Out Time</th>
-                <th>Total Hours</th>
-              </tr>
-            </thead>
-            {/* <tbody>
-              <tr>
-                <td>1</td>
-                
-                <td>{attendanceRecords[0].clock_in_time}</td>
-                <td>{attendanceRecords[0].clock_out_time}</td>
-              </tr>
-            </tbody> */}
-            <tbody>
-              {attendanceRecords.map((attendance, index) => {
-                return (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>
-                      {new Date(attendance.date).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </td>
-                    <td>
-                      {new Date(attendance.clock_in_time).toLocaleTimeString(
-                        "en-US"
-                      )}
-                    </td>
-                    <td>
-                      {attendance.clock_out_time !== null &&
-                        new Date(attendance.clock_out_time).toLocaleTimeString(
-                          "en-US"
-                        )}
-                    </td>
-                    <td>
-                      {attendance.seconds_different !== null &&
-                        getHoursDiff(attendance.seconds_different)}
-                    </td>
+      <div className="record-table">
+        {isSearched ? (
+          attendanceRecords.length > 0 ? (
+            <>
+              <h2>
+                {attendanceRecords[0].name} (Employee ID:{" "}
+                {attendanceRecords[0].employee_id})
+              </h2>
+              <Table striped>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Clock In Time</th>
+                    <th>Clock Out Time</th>
+                    <th>Total Hours</th>
                   </tr>
-                );
-              })}
-            </tbody>
-          </Table>
-        </>
-      )}
+                </thead>
+                <tbody>
+                  {attendanceRecords.map((attendance, index) => {
+                    return (
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>
+                          {new Date(attendance.date).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            }
+                          )}
+                        </td>
+                        <td>
+                          {new Date(
+                            attendance.clock_in_time
+                          ).toLocaleTimeString("en-US", { hour12: false })}
+                        </td>
+                        <td>
+                          {attendance.clock_out_time !== null &&
+                            new Date(
+                              attendance.clock_out_time
+                            ).toLocaleTimeString("en-US", { hour12: false })}
+                        </td>
+                        <td>
+                          {attendance.seconds_different !== null &&
+                            getHoursDiff(attendance.seconds_different)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+            </>
+          ) : (
+            <h2>No user found</h2>
+          )
+        ) : (
+          <></>
+        )}
+      </div>
     </Container>
   );
 }

@@ -18,6 +18,7 @@ export function Attendance(props) {
   const [validated, setValidated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSearched, setIsSearched] = useState(false);
+  const [searchMessage, setSearchMessage] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -34,6 +35,8 @@ export function Attendance(props) {
 
   const getEmployeeAttendance = (id) => {
     setIsLoading(true);
+    setAttendanceRecords([]);
+    setSearchMessage("");
     // console.log(employeeId);
     axios
       .get(`/employeeattendance/${id}`)
@@ -45,6 +48,9 @@ export function Attendance(props) {
       })
       .catch((error) => {
         console.log(error.response);
+        setIsLoading(false);
+        setIsSearched(true);
+        setSearchMessage(error.response.data.error);
       });
   };
 
@@ -165,7 +171,7 @@ export function Attendance(props) {
               </Table>
             </>
           ) : (
-            <h2>No user found</h2>
+            <h2>{searchMessage}</h2>
           )
         ) : (
           <></>

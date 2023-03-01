@@ -27,23 +27,35 @@ router.get("/allattendance", (req, res) => {
 });
 
 router.get("/employeeattendance/:id", (req, res) => {
-  console.log("query: " + req.query.name);
-  // console.log("params: " + req.params.id);
   const { id: employee_id } = req.params;
-
-  const sql = `SELECT employees.name, employees.employee_id, clock_events.clock_in_time, clock_events.clock_out_time, clock_events.date, TIMESTAMPDIFF(SECOND, clock_events.clock_in_time, clock_events.clock_out_time) AS seconds_different
+  db.query(
+    `SELECT employees.name, employees.employee_id FROM employees WHERE employees.employee_id = ${employee_id}`,
+    (err, name) => {
+      if (err) {
+        console.error(err);
+      } else if (name.length === 0) {
+        return res.status(422).json({ error: "No employee found" });
+      } else {
+        const sql = `SELECT employees.name, employees.employee_id, clock_events.clock_in_time, clock_events.clock_out_time, clock_events.date, TIMESTAMPDIFF(SECOND, clock_events.clock_in_time, clock_events.clock_out_time) AS seconds_different
       FROM employees
       JOIN clock_events ON employees.employee_id = clock_events.employee_id
       WHERE employees.employee_id = ${employee_id}
       ORDER BY clock_in_time DESC`;
-  db.query(sql, (err, data) => {
-    console.log("Called");
-    if (err) {
-      return res.json(err);
-    } else {
-      return res.json(data);
+        db.query(sql, (err, data) => {
+          console.log("Called");
+          if (err) {
+            return res.json(err);
+          } else if (data.length === 0) {
+            return res
+              .status(422)
+              .json({ error: "No attendance record found" });
+          } else {
+            return res.json(data);
+          }
+        });
+      }
     }
-  });
+  );
 });
 
 router.post("/newuser", (req, res) => {

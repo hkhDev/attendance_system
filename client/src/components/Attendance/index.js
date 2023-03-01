@@ -34,7 +34,7 @@ export function Attendance(props) {
 
   const getEmployeeAttendance = (id) => {
     setIsLoading(true);
-    setIsSearched(true);
+
     // console.log(employeeId);
     axios
       .get(`/employeeattendance/${id}`)
@@ -42,6 +42,7 @@ export function Attendance(props) {
         console.log(res.data);
         setAttendanceRecords(res.data);
         setIsLoading(false);
+        setIsSearched(true);
       })
       .catch((error) => {
         console.log(error.response);

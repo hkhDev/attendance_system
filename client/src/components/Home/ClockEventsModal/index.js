@@ -63,6 +63,7 @@ export function ClockEventsModal(props) {
                 <Form.Control.Feedback type="invalid">
                   Please enter an employee ID.
                 </Form.Control.Feedback>
+                <Form.Text muted>Demo ID: 6111111</Form.Text>
               </FloatingLabel>
             </Form.Group>
           </Modal.Body>

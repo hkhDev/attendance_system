@@ -140,14 +140,13 @@ export function Attendance(props) {
                       <tr key={index}>
                         <td>{index + 1}</td>
                         <td>
-                          {new Date(attendance.date).toLocaleDateString(
-                            "en-US",
-                            {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            }
-                          )}
+                          {new Date(
+                            attendance.clock_in_time
+                          ).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })}
                         </td>
                         <td>
                           {new Date(
